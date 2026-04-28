@@ -14,6 +14,11 @@
   --color-border: rgba(74,60,49,0.12);
   --color-hero-bg: #E8E4DC;
   --color-card-hover: rgba(74,60,49,0.04);
+  --color-modal-overlay: rgba(44,44,44,0.5);
+  --color-nav-bg: rgba(245,242,236,0.92);
+  --color-input-bg: #ffffff;
+  --color-tag-bg: rgba(74,60,49,0.06);
+  --color-btn-active-text: #ffffff;
   --font-serif: 'Noto Serif TC', 'Songti SC', serif;
   --font-sans: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
   --font-mono: 'Fragment Mono', 'Courier New', monospace;
@@ -21,7 +26,22 @@
   --ease-power2: cubic-bezier(0.45, 0, 0.3, 1);
 }
 
-/* ===== Reset ===== */
+/* Coffee Theme */
+[data-theme="coffee"] {
+  --color-bg: #1F1612;
+  --color-text: #D4C4B0;
+  --color-brown: #C9A87C;
+  --color-muted: #8B7355;
+  --color-border: rgba(201,168,124,0.15);
+  --color-hero-bg: #2A1F1A;
+  --color-card-hover: rgba(201,168,124,0.06);
+  --color-modal-overlay: rgba(15,10,8,0.75);
+  --color-nav-bg: rgba(31,22,18,0.92);
+  --color-input-bg: #2E221C;
+  --color-tag-bg: rgba(201,168,124,0.10);
+  --color-btn-active-text: #1F1612;
+}
+
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
@@ -30,10 +50,27 @@ body {
   background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  transition: background .4s var(--ease-power3), color .4s var(--ease-power3);
 }
 a { color: inherit; text-decoration: none; }
 
-/* ===== Preloader ===== */
+/* Theme Toggle */
+.theme-toggle {
+  position: fixed; bottom: 24px; right: 24px; z-index: 300;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--color-brown); color: var(--color-btn-active-text);
+  border: none; border-radius: 100px; padding: 10px 18px;
+  font-family: var(--font-sans); font-size: .85rem; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  transition: transform .2s, box-shadow .2s, background .3s, color .3s;
+}
+.theme-toggle:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+.theme-toggle:active { transform: scale(0.96); }
+.theme-toggle svg {
+  width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8;
+}
+
+/* Preloader */
 .preloader {
   position: fixed; inset: 0; z-index: 9999;
   background: var(--color-bg);
@@ -60,10 +97,10 @@ a { color: inherit; text-decoration: none; }
   to   { transform: scaleX(1); }
 }
 
-/* ===== Navigation ===== */
+/* Navigation */
 .nav {
   position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
-  background: rgba(245,242,236,0.92); backdrop-filter: blur(20px) saturate(1.2);
+  background: var(--color-nav-bg); backdrop-filter: blur(20px) saturate(1.2);
   border-bottom: 1px solid transparent;
   transition: border-color .3s, background .3s;
 }
@@ -86,12 +123,13 @@ a { color: inherit; text-decoration: none; }
 }
 .nav-links a:hover { color: var(--color-brown); }
 
-/* ===== Hero ===== */
+/* Hero */
 .hero {
   position: relative; min-height: 100vh;
   display: flex; align-items: center; justify-content: center;
   background: var(--color-hero-bg);
   overflow: hidden;
+  transition: background .4s var(--ease-power3);
 }
 .hero-deco {
   position: absolute; font-family: var(--font-serif);
@@ -139,7 +177,7 @@ a { color: inherit; text-decoration: none; }
 }
 .hero-ring {
   position: absolute; inset: 0;
-  border: 1px solid rgba(74,60,49,0.15); border-radius: 50%;
+  border: 1px solid rgba(128,128,128,0.15); border-radius: 50%;
 }
 .hero-ring.r1 { inset: 0;   animation: ringPulse 4s ease-in-out infinite; }
 .hero-ring.r2 { inset: 25px; animation: ringPulse 4s ease-in-out .8s infinite; }
@@ -161,7 +199,7 @@ a { color: inherit; text-decoration: none; }
   50%      { transform: scale(1.02); opacity: 1; }
 }
 
-/* ===== Preface ===== */
+/* Preface */
 .preface {
   max-width: 680px; margin: 0 auto; padding: 100px 24px 80px;
 }
@@ -196,7 +234,7 @@ a { color: inherit; text-decoration: none; }
   font-size: .85rem; color: var(--color-muted);
 }
 
-/* ===== Dimensions ===== */
+/* Dimensions */
 .dimensions {
   max-width: 1100px; margin: 0 auto; padding: 80px 24px;
 }
@@ -252,7 +290,7 @@ a { color: inherit; text-decoration: none; }
   font-size: .95rem; line-height: 1.8; color: var(--color-text); padding-left: 56px;
 }
 
-/* ===== Chapters Grid ===== */
+/* Chapters Grid */
 .chapters {
   max-width: 1100px; margin: 0 auto; padding: 80px 24px;
 }
@@ -271,7 +309,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--color-muted); transition: all .2s;
 }
 .filter-btn:hover { border-color: var(--color-brown); color: var(--color-brown); }
-.filter-btn.is-active { background: var(--color-brown); color: #fff; border-color: var(--color-brown); }
+.filter-btn.is-active { background: var(--color-brown); color: var(--color-btn-active-text); border-color: var(--color-brown); }
 
 .chapters-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
@@ -287,8 +325,12 @@ a { color: inherit; text-decoration: none; }
 }
 .chapter-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(74,60,49,0.06);
-  border-color: rgba(74,60,49,0.2);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  border-color: rgba(128,128,128,0.25);
+}
+[data-theme="coffee"] .chapter-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  border-color: rgba(201,168,124,0.25);
 }
 .chapter-card-header {
   display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
@@ -298,7 +340,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--color-muted);
 }
 .chapter-dim {
-  font-size: .75rem; color: var(--color-muted); background: rgba(74,60,49,0.06);
+  font-size: .75rem; color: var(--color-muted); background: var(--color-tag-bg);
   padding: 3px 10px; border-radius: 100px;
 }
 .chapter-name {
@@ -331,10 +373,10 @@ a { color: inherit; text-decoration: none; }
   margin-left: 4px; vertical-align: middle;
 }
 
-/* ===== Article Modal ===== */
+/* Article Modal */
 .modal-overlay {
   position: fixed; inset: 0; z-index: 200;
-  background: rgba(44,44,44,0.5); backdrop-filter: blur(4px);
+  background: var(--color-modal-overlay); backdrop-filter: blur(4px);
   opacity: 0; visibility: hidden;
   transition: opacity .3s, visibility .3s;
 }
@@ -343,15 +385,16 @@ a { color: inherit; text-decoration: none; }
   position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 680px; z-index: 201;
   background: var(--color-bg);
   transform: translateX(100%);
-  transition: transform .4s var(--ease-power3);
+  transition: transform .4s var(--ease-power3), background .4s var(--ease-power3);
   overflow-y: auto;
 }
 .modal.is-visible { transform: translateX(0); }
 .modal-close {
   position: sticky; top: 0; z-index: 10;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 32px; background: rgba(245,242,236,0.95); backdrop-filter: blur(12px);
+  padding: 20px 32px; background: var(--color-nav-bg); backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-border); cursor: pointer;
+  transition: background .3s;
 }
 .modal-close svg { width: 20px; height: 20px; stroke: var(--color-brown); stroke-width: 1.5; fill: none; }
 .modal-label { font-size: .8rem; color: var(--color-muted); }
@@ -386,7 +429,7 @@ a { color: inherit; text-decoration: none; }
 .modal-nav button:hover { border-color: var(--color-brown); color: var(--color-brown); }
 .modal-nav button:disabled { opacity: .3; cursor: not-allowed; }
 
-/* ===== Footer ===== */
+/* Footer */
 .footer {
   border-top: 1px solid var(--color-border); padding: 40px 24px;
   max-width: 1100px; margin: 0 auto;
@@ -397,7 +440,7 @@ a { color: inherit; text-decoration: none; }
 .footer-links a { font-size: .85rem; color: var(--color-muted); transition: color .2s; }
 .footer-links a:hover { color: var(--color-brown); }
 
-/* ===== Reveal Animations ===== */
+/* Reveal Animations */
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s var(--ease-power3), transform .6s var(--ease-power3); }
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
 .reveal-delay-1 { transition-delay: .08s; }
@@ -407,8 +450,16 @@ a { color: inherit; text-decoration: none; }
 .reveal-delay-5 { transition-delay: .40s; }
 .reveal-delay-6 { transition-delay: .48s; }
 </style>
+<base target="_blank">
 </head>
 <body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="theme-toggle" aria-label="切換主題">
+  <svg id="theme-icon-light" viewBox="0 0 24 24" style="display:none;"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+  <svg id="theme-icon-coffee" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+  <span id="theme-label">咖啡模式</span>
+</button>
 
 <!-- Preloader -->
 <div class="preloader" id="preloader">
@@ -511,8 +562,41 @@ a { color: inherit; text-decoration: none; }
 </div>
 
 <script>
+// ===== Theme System =====
+(function() {
+  const toggleBtn = document.getElementById('theme-toggle');
+  const iconLight = document.getElementById('theme-icon-light');
+  const iconCoffee = document.getElementById('theme-icon-coffee');
+  const label = document.getElementById('theme-label');
+  const html = document.documentElement;
+
+  const savedTheme = localStorage.getItem('kuorong-theme');
+  if (savedTheme === 'coffee') {
+    html.setAttribute('data-theme', 'coffee');
+    iconLight.style.display = 'block';
+    iconCoffee.style.display = 'none';
+    label.textContent = '明亮模式';
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    const isCoffee = html.getAttribute('data-theme') === 'coffee';
+    if (isCoffee) {
+      html.removeAttribute('data-theme');
+      localStorage.setItem('kuorong-theme', 'light');
+      iconLight.style.display = 'none';
+      iconCoffee.style.display = 'block';
+      label.textContent = '咖啡模式';
+    } else {
+      html.setAttribute('data-theme', 'coffee');
+      localStorage.setItem('kuorong-theme', 'coffee');
+      iconLight.style.display = 'block';
+      iconCoffee.style.display = 'none';
+      label.textContent = '明亮模式';
+    }
+  });
+})();
+
 // ===== Data Configuration =====
-// Map dimension IDs to their JSON file paths
 const dimensionFiles = [
   { id: 'emotion',     file: 'dimensions/01-emotion.json',     name: '情緒擴容' },
   { id: 'cognition',   file: 'dimensions/02-cognition.json',   name: '認知擴容' },
@@ -529,18 +613,16 @@ let appData = { intro: {}, dimensions: [] };
 // ===== Async Data Loading =====
 async function loadAllData() {
   try {
-    // Load book.json
     const bookRes = await fetch('book.json');
     if (!bookRes.ok) throw new Error('Failed to load book.json');
     const bookData = await bookRes.json();
     appData.intro = bookData.intro || {};
     appData.profileUrl = bookData.profileUrl || '';
 
-    // Load all dimension files
     const dimPromises = dimensionFiles.map(async (dim) => {
       const res = await fetch(dim.file);
       if (!res.ok) {
-        console.warn(`Failed to load ${dim.file}`);
+        console.warn('Failed to load ' + dim.file);
         return { ...dim, articles: [], dimensionText: '' };
       }
       const data = await res.json();
@@ -582,7 +664,7 @@ function renderHero() {
   const countEl = document.getElementById('hero-count');
 
   const title = appData.intro.title || '擴容';
-  titleEl.innerHTML = title.split('').map(ch => `<span class="reveal-ch">${ch}</span>`).join('');
+  titleEl.innerHTML = title.split('').map(ch => '<span class="reveal-ch">' + ch + '</span>').join('');
 
   subEl.textContent = appData.intro.subtitle || '';
 
@@ -598,9 +680,8 @@ function renderPreface() {
   const prefaceText = appData.intro.prefaceText || '';
   const paragraphs = prefaceText.split('\n\n').filter(p => p.trim());
   document.getElementById('preface-body').innerHTML = paragraphs.map(p => {
-    // Handle markdown bold
     const boldP = p.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    return `<p>${boldP}</p>`;
+    return '<p>' + boldP + '</p>';
   }).join('');
 }
 
@@ -614,17 +695,17 @@ function renderDimensions() {
     dimIndex = i + 1;
     const item = document.createElement('div');
     item.className = 'accordion-item';
-    item.innerHTML = `
+    item.innerHTML = '
       <button class="accordion-toggle">
-        <span class="accordion-num">${String(dimIndex).padStart(2,'0')}</span>
+        <span class="accordion-num">' + String(dimIndex).padStart(2,'0') + '</span>
         <div class="accordion-info">
-          <div class="accordion-name">${dim.name}</div>
-          <div class="accordion-meta">${dim.articles ? dim.articles.length : 0} 篇</div>
+          <div class="accordion-name">' + dim.name + '</div>
+          <div class="accordion-meta">' + (dim.articles ? dim.articles.length : 0) + ' 篇</div>
         </div>
         <span class="accordion-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
       </button>
-      <div class="accordion-body"><p>${dim.dimensionText || ''}</p></div>
-    `;
+      <div class="accordion-body"><p>' + (dim.dimensionText || '') + '</p></div>
+    ';
     accordionEl.appendChild(item);
   });
 }
@@ -653,7 +734,9 @@ function renderChapters(filterDim) {
       globalIndex++;
       const card = document.createElement('article');
       card.className = 'chapter-card reveal reveal-delay-' + ((globalIndex % 6) || 6);
-      card.dataset.index = globalIndex - 1;
+      // FIX: 使用閉包保存正確的索引值
+      const articleIndex = globalIndex - 1;
+      card.dataset.index = articleIndex;
 
       let excerpt = '';
       if (article.summary) {
@@ -661,28 +744,28 @@ function renderChapters(filterDim) {
       }
 
       const tagsHtml = (article.tags || []).slice(0, 3).map(t =>
-        `<span class="chapter-tag">${t}</span>`
+        '<span class="chapter-tag">' + t + '</span>'
       ).join('');
 
-      card.innerHTML = `
+      card.innerHTML = '
         <div class="chapter-card-header">
-          <span class="chapter-num">${String(globalIndex).padStart(2,'0')}</span>
-          <span class="chapter-dim">${dim.name}</span>
+          <span class="chapter-num">' + String(globalIndex).padStart(2,'0') + '</span>
+          <span class="chapter-dim">' + dim.name + '</span>
         </div>
-        <h3 class="chapter-name">${article.title || ''}</h3>
-        <p class="chapter-excerpt">${excerpt}</p>
-        <div class="chapter-tags">${tagsHtml}</div>
+        <h3 class="chapter-name">' + (article.title || '') + '</h3>
+        <p class="chapter-excerpt">' + excerpt + '</p>
+        <div class="chapter-tags">' + tagsHtml + '</div>
         <div class="chapter-footer">
           <span class="chapter-read">閱讀更多 <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
         </div>
-      `;
+      ';
 
-      card.addEventListener('click', () => openModal(globalIndex - 1));
+      // FIX: 綁定當前索引，避免閉包陷阱
+      card.addEventListener('click', () => openModal(articleIndex));
       grid.appendChild(card);
     });
   });
 
-  // Refresh reveal
   setTimeout(() => observeReveal(), 100);
 }
 
@@ -693,7 +776,7 @@ function initPreloader() {
   chars.forEach((ch, i) => {
     ch.style.opacity = '0';
     ch.style.transform = 'translateY(20px)';
-    ch.style.transition = `opacity .6s ${0.3 + i * 0.15}s, transform .6s ${0.3 + i * 0.15}s`;
+    ch.style.transition = 'opacity .6s ' + (0.3 + i * 0.15) + 's, transform .6s ' + (0.3 + i * 0.15) + 's';
     setTimeout(() => { ch.style.opacity = '1'; ch.style.transform = 'translateY(0)'; }, 100);
   });
   setTimeout(() => { preloader.classList.add('loaded'); }, 1800);
@@ -781,7 +864,6 @@ function openModal(globalIndex) {
 }
 
 function updateModalContent() {
-  // Find the article at this global index
   let currentGlobalIdx = 0;
   let found = null;
   let dimName = '';
@@ -811,26 +893,26 @@ function updateModalContent() {
     const paragraphs = found.summary.split('\n\n').filter(p => p.trim());
     bodyHtml = paragraphs.map(p => {
       const boldP = p.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-      return `<p>${boldP}</p>`;
+      return '<p>' + boldP + '</p>';
     }).join('');
   }
 
   const tagsHtml = (found.tags || []).map(t =>
-    `<span class="modal-tag">${t}</span>`
+    '<span class="modal-tag">' + t + '</span>'
   ).join('');
 
-  inner.innerHTML = `
+  inner.innerHTML = '
     <div class="modal-header">
-      <div class="modal-dim">${dimName} &middot; ${String(currentModalIndex + 1).padStart(2,'0')} / ${String(totalArticles).padStart(2,'0')}</div>
-      <h2 class="modal-title">${found.title || ''}</h2>
-      <div class="modal-tags">${tagsHtml}</div>
+      <div class="modal-dim">' + dimName + ' &middot; ' + String(currentModalIndex + 1).padStart(2,'0') + ' / ' + String(totalArticles).padStart(2,'0') + '</div>
+      <h2 class="modal-title">' + (found.title || '') + '</h2>
+      <div class="modal-tags">' + tagsHtml + '</div>
     </div>
-    <div class="modal-body">${bodyHtml}</div>
+    <div class="modal-body">' + bodyHtml + '</div>
     <div class="modal-nav">
-      <button id="modal-prev" ${currentModalIndex <= 0 ? 'disabled' : ''}>&#8592; 上一篇</button>
-      <button id="modal-next" ${currentModalIndex >= totalArticles - 1 ? 'disabled' : ''}>下一篇 &#8594;</button>
+      <button id="modal-prev" ' + (currentModalIndex <= 0 ? 'disabled' : '') + '>&#8592; 上一篇</button>
+      <button id="modal-next" ' + (currentModalIndex >= totalArticles - 1 ? 'disabled' : '') + '>下一篇 &#8594;</button>
     </div>
-  `;
+  ';
 
   const prevBtn = document.getElementById('modal-prev');
   const nextBtn = document.getElementById('modal-next');
@@ -849,7 +931,6 @@ function initKeyboardNav() {
 }
 
 // ===== Start =====
-// Start loading immediately - DOMContentLoaded may have already fired
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', loadAllData);
 } else {
