@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>擴容｜職場裡的溫柔革命</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --color-bg: #F5F2EC;
+  --color-text: #2C2C2C;
+  --color-brown: #4A3C31;
+  --color-muted: #8A7E72;
+  --color-border: rgba(74,60,49,0.12);
+  --color-hero-bg: #E8E4DC;
+  --color-card-hover: rgba(74,60,49,0.04);
+  --font-serif: 'Noto Serif TC', 'Songti SC', serif;
+  --font-sans: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  --font-mono: 'Fragment Mono', 'Courier New', monospace;
+  --ease-power3: cubic-bezier(0.35, 0, 0.1, 1);
+  --ease-power2: cubic-bezier(0.45, 0, 0.3, 1);
+}
+
+/* ===== Reset ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+
+/* ===== Preloader ===== */
+.preloader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--color-bg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity .8s var(--ease-power3), visibility .8s;
+}
+.preloader.loaded { opacity: 0; visibility: hidden; pointer-events: none; }
+.preloader-title {
+  font-family: var(--font-serif); font-size: clamp(2rem, 6vw, 4.5rem);
+  color: var(--color-brown); letter-spacing: .06em; overflow: hidden;
+}
+.preloader-title span { display: inline-block; }
+.preloader-sub {
+  margin-top: 20px; font-size: .95rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--color-muted);
+}
+.preloader-line {
+  width: 60px; height: 1px; background: var(--color-brown);
+  margin-top: 24px; transform-origin: left;
+  animation: preloaderLine 2s var(--ease-power3) forwards;
+}
+@keyframes preloaderLine {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ===== Navigation ===== */
+.nav {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+  background: rgba(245,242,236,0.92); backdrop-filter: blur(20px) saturate(1.2);
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s, background .3s;
+}
+.nav.scrolled { border-bottom-color: var(--color-border); }
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 56px;
+}
+.nav-brand {
+  font-family: var(--font-serif); font-size: 1.2rem;
+  font-weight: 600; color: var(--color-brown); letter-spacing: .02em;
+  transition: opacity .25s;
+}
+.nav-brand:hover { opacity: .6; }
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a {
+  font-size: .85rem; letter-spacing: .02em; color: var(--color-muted);
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--color-brown); }
+
+/* ===== Hero ===== */
+.hero {
+  position: relative; min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--color-hero-bg);
+  overflow: hidden;
+}
+.hero-deco {
+  position: absolute; font-family: var(--font-serif);
+  font-size: clamp(6rem, 20vw, 16rem); color: var(--color-brown);
+  opacity: .04; pointer-events: none; user-select: none;
+  letter-spacing: .1em; line-height: 1;
+}
+.hero-deco.d1 { top: 8%; left: 5%; }
+.hero-deco.d2 { bottom: 10%; right: 5%; }
+.hero-wrap {
+  max-width: 1100px; width: 100%; margin: 0 auto;
+  display: grid; grid-template-columns: 1.1fr 1fr;
+  gap: 64px; padding: 120px 24px 80px; align-items: center;
+}
+@media (max-width: 768px) {
+  .hero-wrap { grid-template-columns: 1fr; gap: 40px; padding: 100px 20px 60px; }
+  .nav-links { display: none; }
+}
+.hero-title {
+  font-family: var(--font-serif); font-size: clamp(2.5rem, 6vw, 4.8rem);
+  font-weight: 600; line-height: 1.1; color: var(--color-brown); letter-spacing: .02em;
+}
+.hero-title span { display: inline-block; }
+.hero-subtitle {
+  margin-top: 28px; font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.8; color: var(--color-muted); max-width: 480px;
+}
+.hero-meta {
+  margin-top: 40px; display: flex; align-items: center; gap: 20px;
+}
+.hero-author {
+  font-family: var(--font-mono); font-size: .8rem;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--color-brown);
+}
+.hero-line { width: 40px; height: 1px; background: var(--color-brown); opacity: .3; }
+.hero-count {
+  font-size: .8rem; color: var(--color-muted); letter-spacing: .02em;
+}
+.hero-visual {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 300px;
+}
+.hero-circle {
+  position: relative; width: 220px; height: 220px;
+}
+.hero-ring {
+  position: absolute; inset: 0;
+  border: 1px solid rgba(74,60,49,0.15); border-radius: 50%;
+}
+.hero-ring.r1 { inset: 0;   animation: ringPulse 4s ease-in-out infinite; }
+.hero-ring.r2 { inset: 25px; animation: ringPulse 4s ease-in-out .8s infinite; }
+.hero-ring.r3 { inset: 50px; animation: ringPulse 4s ease-in-out 1.6s infinite; }
+.hero-ring.r4 { inset: 75px; animation: ringPulse 4s ease-in-out 2.4s infinite; }
+.hero-icon {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 56px; height: 56px; border: 2px solid var(--color-brown);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  opacity: .7;
+}
+.hero-icon::before, .hero-icon::after {
+  content: ''; position: absolute; background: var(--color-brown);
+}
+.hero-icon::before { width: 2px; height: 16px; }
+.hero-icon::after  { width: 16px; height: 2px; }
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: .6; }
+  50%      { transform: scale(1.02); opacity: 1; }
+}
+
+/* ===== Preface ===== */
+.preface {
+  max-width: 680px; margin: 0 auto; padding: 100px 24px 80px;
+}
+.preface-header {
+  font-family: var(--font-mono); font-size: .75rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--color-muted); margin-bottom: 48px;
+}
+.preface-title {
+  font-family: var(--font-serif); font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 600; line-height: 1.4; color: var(--color-brown); margin-bottom: 8px;
+}
+.preface-subtitle {
+  font-size: 1.05rem; color: var(--color-muted); margin-bottom: 40px; line-height: 1.7;
+}
+.preface-body {
+  font-size: 1rem; line-height: 2; color: var(--color-text);
+}
+.preface-body p { margin-bottom: 1.6em; }
+.preface-body strong { color: var(--color-brown); font-weight: 600; }
+.preface-signature {
+  margin-top: 48px; display: flex; align-items: center; gap: 16px;
+}
+.preface-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--color-brown); opacity: .15;
+}
+.preface-name {
+  font-family: var(--font-serif); font-size: 1rem; font-weight: 600;
+  color: var(--color-brown);
+}
+.preface-role {
+  font-size: .85rem; color: var(--color-muted);
+}
+
+/* ===== Dimensions ===== */
+.dimensions {
+  max-width: 1100px; margin: 0 auto; padding: 80px 24px;
+}
+.dimensions-header {
+  margin-bottom: 56px; max-width: 640px;
+}
+.dimensions-label {
+  font-family: var(--font-mono); font-size: .75rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--color-muted); margin-bottom: 20px;
+}
+.dimensions-title {
+  font-family: var(--font-serif); font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 600; color: var(--color-brown); line-height: 1.4; margin-bottom: 16px;
+}
+.dimensions-desc {
+  font-size: 1rem; line-height: 1.8; color: var(--color-muted);
+}
+
+/* Accordion */
+.accordion { display: flex; flex-direction: column; gap: 12px; }
+.accordion-item { border: 1px solid var(--color-border); border-radius: 12px; overflow: hidden; }
+.accordion-toggle {
+  width: 100%; display: flex; align-items: center; gap: 20px;
+  padding: 24px 28px; background: transparent; border: none; cursor: pointer;
+  text-align: left; transition: background .2s;
+}
+.accordion-toggle:hover { background: var(--color-card-hover); }
+.accordion-num {
+  font-family: var(--font-mono); font-size: .8rem; letter-spacing: .04em;
+  color: var(--color-muted); flex-shrink: 0; min-width: 36px;
+}
+.accordion-info { flex: 1; }
+.accordion-name {
+  font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600;
+  color: var(--color-brown); margin-bottom: 4px;
+}
+.accordion-meta {
+  font-size: .85rem; color: var(--color-muted); line-height: 1.5;
+}
+.accordion-arrow {
+  width: 20px; height: 20px; flex-shrink: 0;
+  transition: transform .3s var(--ease-power2);
+}
+.accordion-arrow svg { width: 100%; height: 100%; stroke: var(--color-muted); stroke-width: 1.5; fill: none; }
+.accordion-item.is-open .accordion-arrow { transform: rotate(180deg); }
+
+.accordion-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height .4s var(--ease-power2), padding .3s;
+}
+.accordion-item.is-open .accordion-body { max-height: 500px; padding: 0 28px 28px; }
+.accordion-body p {
+  font-size: .95rem; line-height: 1.8; color: var(--color-text); padding-left: 56px;
+}
+
+/* ===== Chapters Grid ===== */
+.chapters {
+  max-width: 1100px; margin: 0 auto; padding: 80px 24px;
+}
+.chapters-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  flex-wrap: wrap; gap: 20px; margin-bottom: 48px;
+}
+.chapters-title {
+  font-family: var(--font-serif); font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 600; color: var(--color-brown);
+}
+.chapters-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-btn {
+  padding: 8px 18px; border-radius: 100px; border: 1px solid var(--color-border);
+  background: transparent; font-size: .85rem; cursor: pointer;
+  color: var(--color-muted); transition: all .2s;
+}
+.filter-btn:hover { border-color: var(--color-brown); color: var(--color-brown); }
+.filter-btn.is-active { background: var(--color-brown); color: #fff; border-color: var(--color-brown); }
+
+.chapters-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+}
+@media (max-width: 900px) { .chapters-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 540px) { .chapters-grid { grid-template-columns: 1fr; } }
+
+.chapter-card {
+  border: 1px solid var(--color-border); border-radius: 12px; padding: 28px;
+  cursor: pointer; transition: transform .3s var(--ease-power2), box-shadow .3s, border-color .3s;
+  background: transparent; text-align: left; width: 100%;
+  display: flex; flex-direction: column; min-height: 200px;
+}
+.chapter-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(74,60,49,0.06);
+  border-color: rgba(74,60,49,0.2);
+}
+.chapter-card-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+}
+.chapter-num {
+  font-family: var(--font-mono); font-size: .8rem; letter-spacing: .04em;
+  color: var(--color-muted);
+}
+.chapter-dim {
+  font-size: .75rem; color: var(--color-muted); background: rgba(74,60,49,0.06);
+  padding: 3px 10px; border-radius: 100px;
+}
+.chapter-name {
+  font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600;
+  line-height: 1.5; color: var(--color-brown); margin-bottom: 16px;
+}
+.chapter-excerpt {
+  font-size: .9rem; line-height: 1.7; color: var(--color-muted);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden; flex: 1;
+}
+.chapter-tags {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px;
+}
+.chapter-tag {
+  font-size: .75rem; color: var(--color-muted); padding: 3px 10px;
+  border-radius: 100px; border: 1px solid var(--color-border);
+}
+.chapter-footer {
+  display: flex; align-items: center; justify-content: space-between; margin-top: 20px;
+  padding-top: 16px; border-top: 1px solid var(--color-border);
+}
+.chapter-read {
+  font-size: .85rem; color: var(--color-brown); font-weight: 500;
+  transition: color .2s;
+}
+.chapter-card:hover .chapter-read { color: var(--color-muted); }
+.chapter-read svg {
+  width: 14px; height: 14px; stroke: currentColor; stroke-width: 1.5; fill: none;
+  margin-left: 4px; vertical-align: middle;
+}
+
+/* ===== Article Modal ===== */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(44,44,44,0.5); backdrop-filter: blur(4px);
+  opacity: 0; visibility: hidden;
+  transition: opacity .3s, visibility .3s;
+}
+.modal-overlay.is-visible { opacity: 1; visibility: visible; }
+.modal {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 680px; z-index: 201;
+  background: var(--color-bg);
+  transform: translateX(100%);
+  transition: transform .4s var(--ease-power3);
+  overflow-y: auto;
+}
+.modal.is-visible { transform: translateX(0); }
+.modal-close {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 32px; background: rgba(245,242,236,0.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border); cursor: pointer;
+}
+.modal-close svg { width: 20px; height: 20px; stroke: var(--color-brown); stroke-width: 1.5; fill: none; }
+.modal-label { font-size: .8rem; color: var(--color-muted); }
+.modal-inner { padding: 20px 32px 64px; }
+.modal-header { margin-bottom: 40px; }
+.modal-dim {
+  font-family: var(--font-mono); font-size: .75rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--color-muted); margin-bottom: 12px;
+}
+.modal-title {
+  font-family: var(--font-serif); font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 600; line-height: 1.4; color: var(--color-brown); margin-bottom: 16px;
+}
+.modal-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+.modal-tag {
+  font-size: .8rem; color: var(--color-muted); padding: 5px 14px;
+  border-radius: 100px; border: 1px solid var(--color-border);
+}
+.modal-body {
+  font-size: 1rem; line-height: 2; color: var(--color-text);
+}
+.modal-body p { margin-bottom: 1.6em; }
+.modal-nav {
+  display: flex; justify-content: space-between; gap: 12px; margin-top: 48px;
+  padding-top: 32px; border-top: 1px solid var(--color-border);
+}
+.modal-nav button {
+  padding: 12px 24px; border: 1px solid var(--color-border); border-radius: 8px;
+  background: transparent; font-size: .85rem; cursor: pointer; color: var(--color-muted);
+  transition: all .2s; flex: 1;
+}
+.modal-nav button:hover { border-color: var(--color-brown); color: var(--color-brown); }
+.modal-nav button:disabled { opacity: .3; cursor: not-allowed; }
+
+/* ===== Footer ===== */
+.footer {
+  border-top: 1px solid var(--color-border); padding: 40px 24px;
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+}
+.footer-copy { font-size: .85rem; color: var(--color-muted); }
+.footer-links { display: flex; gap: 24px; list-style: none; }
+.footer-links a { font-size: .85rem; color: var(--color-muted); transition: color .2s; }
+.footer-links a:hover { color: var(--color-brown); }
+
+/* ===== Reveal Animations ===== */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s var(--ease-power3), transform .6s var(--ease-power3); }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: .08s; }
+.reveal-delay-2 { transition-delay: .16s; }
+.reveal-delay-3 { transition-delay: .24s; }
+.reveal-delay-4 { transition-delay: .32s; }
+.reveal-delay-5 { transition-delay: .40s; }
+.reveal-delay-6 { transition-delay: .48s; }
+</style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div class="preloader" id="preloader">
+  <div class="preloader-title"><span>擴</span><span>容</span></div>
+  <div class="preloader-sub">職場裡的溫柔革命</div>
+  <div class="preloader-line"></div>
+</div>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#">擴容</a>
+    <ul class="nav-links">
+      <li><a href="#preface">序</a></li>
+      <li><a href="#dimensions">維度</a></li>
+      <li><a href="#chapters">篇章</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <div class="hero-deco d1">擴</div>
+  <div class="hero-deco d2">容</div>
+  <div class="hero-wrap">
+    <div class="hero-text">
+      <h1 class="hero-title" id="hero-title"></h1>
+      <p class="hero-subtitle" id="hero-subtitle"></p>
+      <div class="hero-meta">
+        <span class="hero-author">石頭哥</span>
+        <span class="hero-line"></span>
+        <span class="hero-count" id="hero-count"></span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-circle">
+        <div class="hero-ring r1"></div>
+        <div class="hero-ring r2"></div>
+        <div class="hero-ring r3"></div>
+        <div class="hero-ring r4"></div>
+        <div class="hero-icon"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Preface -->
+<section class="preface reveal" id="preface">
+  <div class="preface-header">序</div>
+  <h2 class="preface-title" id="preface-title"></h2>
+  <p class="preface-subtitle" id="preface-subtitle"></p>
+  <div class="preface-body" id="preface-body"></div>
+  <div class="preface-signature">
+    <div class="preface-avatar"></div>
+    <div>
+      <div class="preface-name">石頭哥</div>
+      <div class="preface-role">職涯教練 &amp; 組織發展顧問</div>
+    </div>
+  </div>
+</section>
+
+<!-- Dimensions -->
+<section class="dimensions reveal" id="dimensions">
+  <div class="dimensions-header">
+    <div class="dimensions-label">八大維度</div>
+    <h2 class="dimensions-title" id="dimensions-title"></h2>
+    <p class="dimensions-desc" id="dimensions-desc"></p>
+  </div>
+  <div class="accordion" id="accordion"></div>
+</section>
+
+<!-- Chapters -->
+<section class="chapters" id="chapters">
+  <div class="chapters-header reveal">
+    <h2 class="chapters-title">48 篇篇章</h2>
+    <div class="chapters-filters" id="filters">
+      <button class="filter-btn is-active" data-filter="all">全部</button>
+    </div>
+  </div>
+  <div class="chapters-grid" id="grid"></div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <span class="footer-copy">擴容 &copy; 2025 石頭哥</span>
+  <ul class="footer-links">
+    <li><a href="https://vocus.cc/user/@iiStone" target="_blank">作者頁</a></li>
+    <li><a href="https://vocus.cc/article/67f8c03afd89780001d5c147" target="_blank">認識石頭哥</a></li>
+  </ul>
+</footer>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay"></div>
+<div class="modal" id="modal">
+  <div class="modal-close" id="modal-close">
+    <span class="modal-label">關閉</span>
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </div>
+  <div class="modal-inner" id="modal-inner"></div>
+</div>
+
+<script>
+// ===== Data Configuration =====
+// Map dimension IDs to their JSON file paths
+const dimensionFiles = [
+  { id: 'emotion',     file: 'dimensions/01-emotion.json',     name: '情緒擴容' },
+  { id: 'cognition',   file: 'dimensions/02-cognition.json',   name: '認知擴容' },
+  { id: 'action',      file: 'dimensions/03-action.json',      name: '行動擴容' },
+  { id: 'relationship',file: 'dimensions/04-relationship.json',name: '關係擴容' },
+  { id: 'team',        file: 'dimensions/05-team.json',        name: '團隊擴容' },
+  { id: 'strategy',    file: 'dimensions/06-strategy.json',    name: '策略擴容' },
+  { id: 'time',        file: 'dimensions/07-time.json',        name: '時間擴容' },
+  { id: 'life',        file: 'dimensions/08-life.json',        name: '生命擴容' }
+];
+
+let appData = { intro: {}, dimensions: [] };
+
+// ===== Async Data Loading =====
+async function loadAllData() {
+  try {
+    // Load book.json
+    const bookRes = await fetch('book.json');
+    if (!bookRes.ok) throw new Error('Failed to load book.json');
+    const bookData = await bookRes.json();
+    appData.intro = bookData.intro || {};
+    appData.profileUrl = bookData.profileUrl || '';
+
+    // Load all dimension files
+    const dimPromises = dimensionFiles.map(async (dim) => {
+      const res = await fetch(dim.file);
+      if (!res.ok) {
+        console.warn(`Failed to load ${dim.file}`);
+        return { ...dim, articles: [], dimensionText: '' };
+      }
+      const data = await res.json();
+      return {
+        ...dim,
+        dimensionText: data.dimensionText || '',
+        articles: data.articles || []
+      };
+    });
+
+    const loadedDims = await Promise.all(dimPromises);
+    appData.dimensions = loadedDims;
+
+    initApp();
+  } catch (err) {
+    console.error('Error loading data:', err);
+    document.body.innerHTML = '<div style="padding:40px;text-align:center;">載入失敗：' + (err.message || '未知錯誤') + '</div>';
+  }
+}
+
+// ===== Init =====
+function initApp() {
+  renderHero();
+  renderPreface();
+  renderDimensions();
+  renderFilters();
+  renderChapters();
+  initPreloader();
+  initNav();
+  initReveal();
+  initAccordion();
+  initModal();
+  initKeyboardNav();
+}
+
+function renderHero() {
+  const titleEl = document.getElementById('hero-title');
+  const subEl = document.getElementById('hero-subtitle');
+  const countEl = document.getElementById('hero-count');
+
+  const title = appData.intro.title || '擴容';
+  titleEl.innerHTML = title.split('').map(ch => `<span class="reveal-ch">${ch}</span>`).join('');
+
+  subEl.textContent = appData.intro.subtitle || '';
+
+  let totalArticles = 0;
+  appData.dimensions.forEach(d => { totalArticles += (d.articles ? d.articles.length : 0); });
+  countEl.textContent = totalArticles + ' 篇職場溫柔革命';
+}
+
+function renderPreface() {
+  document.getElementById('preface-title').textContent = appData.intro.prefaceTitle || '';
+  document.getElementById('preface-subtitle').textContent = appData.intro.prefaceSubtitle || '';
+
+  const prefaceText = appData.intro.prefaceText || '';
+  const paragraphs = prefaceText.split('\n\n').filter(p => p.trim());
+  document.getElementById('preface-body').innerHTML = paragraphs.map(p => {
+    // Handle markdown bold
+    const boldP = p.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    return `<p>${boldP}</p>`;
+  }).join('');
+}
+
+function renderDimensions() {
+  document.getElementById('dimensions-title').textContent = appData.intro.dimensionsTitle || '八大維度';
+  document.getElementById('dimensions-desc').textContent = appData.intro.dimensionsSubtitle || '';
+
+  const accordionEl = document.getElementById('accordion');
+  let dimIndex = 0;
+  appData.dimensions.forEach((dim, i) => {
+    dimIndex = i + 1;
+    const item = document.createElement('div');
+    item.className = 'accordion-item';
+    item.innerHTML = `
+      <button class="accordion-toggle">
+        <span class="accordion-num">${String(dimIndex).padStart(2,'0')}</span>
+        <div class="accordion-info">
+          <div class="accordion-name">${dim.name}</div>
+          <div class="accordion-meta">${dim.articles ? dim.articles.length : 0} 篇</div>
+        </div>
+        <span class="accordion-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </button>
+      <div class="accordion-body"><p>${dim.dimensionText || ''}</p></div>
+    `;
+    accordionEl.appendChild(item);
+  });
+}
+
+function renderFilters() {
+  const filtersEl = document.getElementById('filters');
+  appData.dimensions.forEach(dim => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.dataset.filter = dim.id;
+    btn.textContent = dim.name;
+    filtersEl.appendChild(btn);
+  });
+}
+
+function renderChapters(filterDim) {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  let globalIndex = 0;
+  appData.dimensions.forEach(dim => {
+    if (filterDim && filterDim !== 'all' && filterDim !== dim.id) return;
+    if (!dim.articles) return;
+
+    dim.articles.forEach((article, idx) => {
+      globalIndex++;
+      const card = document.createElement('article');
+      card.className = 'chapter-card reveal reveal-delay-' + ((globalIndex % 6) || 6);
+      card.dataset.index = globalIndex - 1;
+
+      let excerpt = '';
+      if (article.summary) {
+        excerpt = article.summary.substring(0, 90).replace(/\n/g, '') + '...';
+      }
+
+      const tagsHtml = (article.tags || []).slice(0, 3).map(t =>
+        `<span class="chapter-tag">${t}</span>`
+      ).join('');
+
+      card.innerHTML = `
+        <div class="chapter-card-header">
+          <span class="chapter-num">${String(globalIndex).padStart(2,'0')}</span>
+          <span class="chapter-dim">${dim.name}</span>
+        </div>
+        <h3 class="chapter-name">${article.title || ''}</h3>
+        <p class="chapter-excerpt">${excerpt}</p>
+        <div class="chapter-tags">${tagsHtml}</div>
+        <div class="chapter-footer">
+          <span class="chapter-read">閱讀更多 <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </div>
+      `;
+
+      card.addEventListener('click', () => openModal(globalIndex - 1));
+      grid.appendChild(card);
+    });
+  });
+
+  // Refresh reveal
+  setTimeout(() => observeReveal(), 100);
+}
+
+// ===== Preloader =====
+function initPreloader() {
+  const preloader = document.getElementById('preloader');
+  const chars = document.querySelectorAll('.preloader-title span');
+  chars.forEach((ch, i) => {
+    ch.style.opacity = '0';
+    ch.style.transform = 'translateY(20px)';
+    ch.style.transition = `opacity .6s ${0.3 + i * 0.15}s, transform .6s ${0.3 + i * 0.15}s`;
+    setTimeout(() => { ch.style.opacity = '1'; ch.style.transform = 'translateY(0)'; }, 100);
+  });
+  setTimeout(() => { preloader.classList.add('loaded'); }, 1800);
+}
+
+// ===== Nav =====
+function initNav() {
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
+// ===== Reveal on scroll =====
+let revealObserver;
+function initReveal() {
+  revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('is-visible');
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  observeReveal();
+}
+function observeReveal() {
+  document.querySelectorAll('.reveal:not(.is-visible)').forEach(el => {
+    revealObserver.observe(el);
+  });
+}
+
+// ===== Accordion =====
+function initAccordion() {
+  document.getElementById('accordion').addEventListener('click', e => {
+    const toggle = e.target.closest('.accordion-toggle');
+    if (!toggle) return;
+    const item = toggle.closest('.accordion-item');
+    const wasOpen = item.classList.contains('is-open');
+    document.querySelectorAll('.accordion-item.is-open').forEach(i => i.classList.remove('is-open'));
+    if (!wasOpen) item.classList.add('is-open');
+  });
+}
+
+// ===== Filters =====
+document.getElementById('filters').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('is-active'));
+  btn.classList.add('is-active');
+  renderChapters(btn.dataset.filter);
+});
+
+// ===== Modal =====
+let currentModalIndex = 0;
+
+function initModal() {
+  const overlay = document.getElementById('modal-overlay');
+  const modal = document.getElementById('modal');
+  const closeBtn = document.getElementById('modal-close');
+
+  function close() { modal.classList.remove('is-visible'); overlay.classList.remove('is-visible'); document.body.style.overflow = ''; }
+
+  overlay.addEventListener('click', close);
+  closeBtn.addEventListener('click', close);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  modal.addEventListener('click', e => { if (e.target === modal) close(); });
+}
+
+function openModal(globalIndex) {
+  currentModalIndex = globalIndex;
+  updateModalContent();
+
+  const overlay = document.getElementById('modal-overlay');
+  const modal = document.getElementById('modal');
+  overlay.classList.add('is-visible');
+  modal.classList.add('is-visible');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('modal-inner').scrollTop = 0;
+}
+
+function updateModalContent() {
+  // Find the article at this global index
+  let currentGlobalIdx = 0;
+  let found = null;
+  let dimName = '';
+  let dimCount = 0;
+
+  for (const dim of appData.dimensions) {
+    if (!dim.articles) continue;
+    for (const article of dim.articles) {
+      if (currentGlobalIdx === currentModalIndex) {
+        found = article;
+        dimName = dim.name;
+        dimCount = dim.articles.length;
+        break;
+      }
+      currentGlobalIdx++;
+    }
+    if (found) break;
+  }
+
+  if (!found) return;
+
+  const inner = document.getElementById('modal-inner');
+  const totalArticles = appData.dimensions.reduce((sum, d) => sum + (d.articles ? d.articles.length : 0), 0);
+
+  let bodyHtml = '';
+  if (found.summary) {
+    const paragraphs = found.summary.split('\n\n').filter(p => p.trim());
+    bodyHtml = paragraphs.map(p => {
+      const boldP = p.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      return `<p>${boldP}</p>`;
+    }).join('');
+  }
+
+  const tagsHtml = (found.tags || []).map(t =>
+    `<span class="modal-tag">${t}</span>`
+  ).join('');
+
+  inner.innerHTML = `
+    <div class="modal-header">
+      <div class="modal-dim">${dimName} &middot; ${String(currentModalIndex + 1).padStart(2,'0')} / ${String(totalArticles).padStart(2,'0')}</div>
+      <h2 class="modal-title">${found.title || ''}</h2>
+      <div class="modal-tags">${tagsHtml}</div>
+    </div>
+    <div class="modal-body">${bodyHtml}</div>
+    <div class="modal-nav">
+      <button id="modal-prev" ${currentModalIndex <= 0 ? 'disabled' : ''}>&#8592; 上一篇</button>
+      <button id="modal-next" ${currentModalIndex >= totalArticles - 1 ? 'disabled' : ''}>下一篇 &#8594;</button>
+    </div>
+  `;
+
+  const prevBtn = document.getElementById('modal-prev');
+  const nextBtn = document.getElementById('modal-next');
+  if (prevBtn) prevBtn.addEventListener('click', () => { if (currentModalIndex > 0) { currentModalIndex--; updateModalContent(); document.getElementById('modal-inner').scrollTop = 0; }});
+  if (nextBtn) nextBtn.addEventListener('click', () => { if (currentModalIndex < totalArticles - 1) { currentModalIndex++; updateModalContent(); document.getElementById('modal-inner').scrollTop = 0; }});
+}
+
+// ===== Keyboard Nav =====
+function initKeyboardNav() {
+  const modal = document.getElementById('modal');
+  document.addEventListener('keydown', e => {
+    if (!modal.classList.contains('is-visible')) return;
+    if (e.key === 'ArrowLeft') { e.preventDefault(); document.getElementById('modal-prev')?.click(); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); document.getElementById('modal-next')?.click(); }
+  });
+}
+
+// ===== Start =====
+// Start loading immediately - DOMContentLoaded may have already fired
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadAllData);
+} else {
+  loadAllData();
+}
+</script>
+
+</body>
+</html>
